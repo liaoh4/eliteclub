@@ -18,6 +18,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.Duration;
 import java.util.List;
@@ -32,14 +33,8 @@ public class EliteClubApplication  {
 	@Autowired
 	private BillionairesService billionairesService;
 
-	@Bean
-	public RestTemplate restTemplate(RestTemplateBuilder builder) {
-		return builder
-				.setConnectTimeout(Duration.ofMillis(300000))
-				.setReadTimeout(Duration.ofMillis(300000))
-				.build();
 
-	}
+
 
 		public static void main(String[] args) {
 		SpringApplication.run(EliteClubApplication.class, args);

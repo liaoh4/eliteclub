@@ -31,8 +31,6 @@ public class InitializeDatabase implements ApplicationRunner {
     Forbes400Properties forbes400Properties;
     @Autowired
     WebClient webClient;
-    @Autowired
-    RestTemplate restTemplate;
 
 
     @Override
@@ -44,8 +42,12 @@ public class InitializeDatabase implements ApplicationRunner {
 
     private void fillDatabaseDuringStartup() throws JsonProcessingException {
         List<Billionaires> billionaires = new ArrayList<>();
-        final ResponseEntity<String> forbes400ResponseEntity = restTemplate.getForEntity(forbes400Properties.buildEndPoint(), String.class);
-        if (forbes400ResponseEntity.getStatusCode().isError()) {
+
+        final ResponseEntity<String> forbes400ResponseEntity = webClient.get()
+                .retrieve()
+                .toEntity(String.class)
+                .block();
+        if (forbes400ResponseEntity == null || forbes400ResponseEntity.getStatusCode().isError()) {
             throw new InitializationFailedException("Issue with forbes 400 service");
         }
         ObjectMapper objectMapper = new ObjectMapper();
@@ -54,9 +56,10 @@ public class InitializeDatabase implements ApplicationRunner {
             for (JsonNode eachBillionaire : jsonNode) {
                 Billionaires bill = new Billionaires();
                 final String billionaireString = eachBillionaire.toString();
-                String name = JsonPath.read(billionaireString, "$.personName");
-                bill.setPersonName(name);
-                bill.setLastName(name);
+                String firstname = JsonPath.read(billionaireString, "$.personName");
+                bill.setPersonName(firstname);
+                String lastname = JsonPath.read(billionaireString, "$.lastName");
+                bill.setLastName(lastname);
                 String company = JsonPath.read(billionaireString, "$.source");
                 bill.setCompany(company);
                 Integer netWorth = JsonPath.read(billionaireString, "$.rank");

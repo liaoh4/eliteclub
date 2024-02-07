@@ -14,13 +14,14 @@ public class Webconfig {
     Forbes400Properties forbes400Properties;
     @Bean
     public WebClient.Builder webClientBuilder() {
-        return WebClient.builder()
-                // 进行其他配置
-                .baseUrl(forbes400Properties.buildEndPoint());
+        return WebClient.builder();
     }
 
     @Bean
     public WebClient webClient(WebClient.Builder webClientBuilder) {
-        return webClientBuilder.build();
+        return webClientBuilder.baseUrl(forbes400Properties.buildEndPoint())
+                .build();
     }
+
+
 }
